@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+start() {
+	/usr/bin/wifidogx
+}
+
+stop() {
+	if [ -r /tmp/wifidogx.pid ]; then
+		kill $(cat /tmp/wifidogx.pid)
+	fi
+}
