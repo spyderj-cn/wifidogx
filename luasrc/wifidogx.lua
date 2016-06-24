@@ -12,12 +12,8 @@ local tasklet = require 'tasklet'
 -- variables {
 
 local ARGV = arg
-local DEBUG = false 
 
-VERSION = '1.0.0'
-
-local loglevel = DEBUG and 'debug' or 'info'
-local logpath = DEBUG and 'stdout' or 'memory:200'
+VERSION = '1.0.1'
 
 fw = require 'wifidogx.fw_iptables'  -- fw_ipset is altnernative.
 conf = require 'wifidogx.conf'
@@ -190,17 +186,18 @@ local function main()
 	local usage = [[
 Usage: wifidogx [options]
   -c            Config file path
+  -d            Debug mode
   -a            Authentication URL(will override value in the config file)
   -f            Run in foreground
-  -p <path>     Log path, default to 'memory:200'
-  -l <level>    Log level. default to 'info'
+  -o <path>     Log output, default to /tmp/wifidogx.log(stdout in debug mode)
+  -l <level>    Log level. default to 'info'('debug' in debug mode)
   -h            Print usage
   -v            Print version information
   -t            Test the legacy of config file
   -I            Initialize firewall rules
   -D            Destroy firewall rules
 ]]
-	local opts = getopt(ARGV, 'c:fp:l:hvtID')
+	local opts = getopt(ARGV, 'dc:fp:l:hvtID')
 	
 	if not opts or opts.h then
 		print(usage)
@@ -224,7 +221,7 @@ Usage: wifidogx [options]
 		end
 		local ok = pcall(conf.init)
 		if ok then
-			print('[Succeed]')
+			io.stderr:write('[Succeed]\n')
 			dump(conf) -- TODO: the output is not good-looking.
 			os.exit(0)
 		else
@@ -252,28 +249,16 @@ Usage: wifidogx [options]
 	end
 	
 	local app = require 'app'
-	app.start_ctlserver_task('wifidogx', commands)
-	auth.init()
-	http.init()
-
-	log.init({
-		level = opts.l or loglevel, 
-		path = opts.p or logpath, 
-		with_time = true
-	})
-	fw.init(conf)
-	
-	if conf.daemon and not DEBUG then
-		daemonize()
-	end
-	
 	app.APPNAME = 'wifidogx'
-	app.APPCTL = 'wdxctl'
-	app.DEBUG = DEBUG
-	init_ping_task()
-	init_client_timeout_check_task()
+	local exitcode = app.run(opts, function ()
+		app.start_ctlserver_task(commands)
+		auth.init()
+		http.init()
+		fw.init(conf)
+		init_ping_task()
+		init_client_timeout_check_task()
+	end)
 	
-	local exitcode = app.run()
 	fw.destroy(conf)
 	os.exit(exitcode)
 end
