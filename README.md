@@ -117,7 +117,7 @@ GatewayPort (可选）
 GatewayAddress 
 GatewayInterface
 ExternalInterface (可选)
-Firewall Rules （这一项也应当被动态修改，但是j同学还没想好具体做法）
+Firewall Rules 
 
 ####**一些改动**
 
@@ -153,7 +153,7 @@ PingInterval    30
 ###通信协议
 
 ####**技术特点**
-通信过程是wifidogx和wifidog区别最大的一块，j同学认为wifidogx的通信技术需求应当有以下几方面：
+通信过程是wifidogx和wifidog区别最大的一块：
 
 * 能进行批量认证，数据采用json编码，使用post方法发送http请求。
 * 数据量比较大的时候使用gzip压缩。
