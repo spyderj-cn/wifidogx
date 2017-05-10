@@ -4,20 +4,20 @@
 Wifidogx是一款新的无线认证客户端，最早出于spyderj做无线营销时碰到的wifidog各种稳定性问题。经过一段时间的发展后，其功能和优点已经大幅超出了wifidog：
 
 
-####**更稳定**
+#### **更稳定**
 - 解决了Wifidog频繁退出和死锁的问题。
 
-####**更高效**
+#### **更高效**
 - 采用epoll来支持并发。
 - 新的认证通信协议可支持批量认证。
 
-####**更强大**
+#### **更强大**
 - 提供以ipset的方式进行防火墙规则管理(需要6.22及以上版本)。
 - 支持与认证服务器之间采用https通信。
 - 支持简单的静态文件服务。
 - 更好的集中管理：认证服务器应答报文中可随时携带要下发的配置信息，wifidogx检测到有配置信息后会立刻予以生效。
 
-####**更便捷**
+#### **更便捷**
 - 单线程架构，无需再小心翼翼的加锁。
 - 全部由lua编码，即改即得，快的有点狠的二次开发效率。
 
@@ -28,28 +28,28 @@ Wifidogx是一款新的无线认证客户端，最早出于spyderj做无线营�
 
 wifidogx依赖[lask](https://github.com/spyderj-cn/lask)。lask导出了常用的posix api，并提供了一个异步通信框架。
 
-####**下载**
+#### **下载**
 git clone https://github.com/spyderj-cn/wifidogx.git
 
-####**编译**
+#### **编译**
 Wifidogx中(只)包含了支持openwrt的makefile文件，将源码包放在某个src-link的的目录下即可。
 同wifidog一样，wifidogx也在menuconfig的/Network/Captive Portals栏目下。
 
 > 本质上wifidogx不需要编译，其编译实际上是安装过程。
 
 
-####**运行**
-#####**启动**
+#### **运行**
+##### **启动**
  /etc/init.d/wifidogx start
- 
-#####**停止**
+
+##### **停止**
 /etc/init.d/wifidogx stop
 
 >目前不支持restart
 
 -----
 
-#####**Wifidogx详细的启动参数**
+##### **Wifidogx详细的启动参数**
 | 选项 |含义|
 |-------|------|
 | -a  | 认证路径，会覆盖配置文件中的AuthURL|
@@ -66,7 +66,7 @@ Wifidogx中(只)包含了支持openwrt的makefile文件，将源码包放在某�
 
 >调试模式下，Wifidogx自动开启-f选项，日志输出到标准输出，日志级别为debug。建议在初次接触wifidogx时使用调试模式。
 
-#####**Wifidogx运行时生成的文件**
+##### **Wifidogx运行时生成的文件**
 以下文件默认在/tmp目录下(其中日志文件所在目录可另行指定)
 
 | 文件名 |作用|
@@ -76,7 +76,7 @@ Wifidogx中(只)包含了支持openwrt的makefile文件，将源码包放在某�
 |wifidogx.sock| 和wdxctl通信的unix域套接字服务端文件|
 |wifidogx.death| 异常退出后的lua栈信息|
 
-#####**wdxctl(对应wdctl)工具**
+##### **wdxctl(对应wdctl)工具**
 | 命令 | 作用 |
 |----|-----|
 |clients|获取连接了wifi的用户信息|
@@ -85,7 +85,7 @@ Wifidogx中(只)包含了支持openwrt的makefile文件，将源码包放在某�
 
 
 ------
-###文件服务
+### 文件服务
 wifidogx启动后检查/tmp/wifidogx-www是否存在，如果不存在则将/etc/wifidogx-www下的所有内容
 复制到/tmp/wifidogx-www，并以/tmp/wifidogx-www为docroot开启文件服务。
 如果来访的URL是“/wifidogx-static/*”格式则视其为请求静态文件。
@@ -109,20 +109,20 @@ wifidogx启动后检查/tmp/wifidogx-www是否存在，如果不存在则将/etc
 
 
 ------
-###配置文件
+### 配置文件
 配置文件中的选项，大部分都可以由认证服务器动态修改，除了以下几项：
-AuthURL 
+AuthURL
 GatewayID   (可选）
 GatewayPort (可选）
-GatewayAddress 
+GatewayAddress
 GatewayInterface
 ExternalInterface (可选)
-Firewall Rules 
+Firewall Rules
 
-####**一些改动**
+#### **一些改动**
 
 - 不再支持AuthServer块和多个认证服务器，只支持单个AuthURL。
-> (如有特殊字符请先编码，wifidogx不自动进行url编码。) 
+> (如有特殊字符请先编码，wifidogx不自动进行url编码。)
 > 示例：
 AuthURL    https://mysite.com:8888/index.php?s=/Wifidogx/auth
 
@@ -131,12 +131,12 @@ AuthURL    https://mysite.com:8888/index.php?s=/Wifidogx/auth
 几个跳转路径分别由PortalPath/MessagePath/LoginPath指定。
 （PortalPath/MessagePath/LoginPath尾部的&(或?)是必要的；并且如有特殊字符请先编码）。
 示例：
-RedirectHostname www.mysite2.com
+RedirectHostname  www.mysite2.com
 PortalPath        /index.php?s=/Wifidogx/portal
 MessagePath       /index.php?s=/Wifidogx/message
 LoginPath         /index.php?s=/Wifidogx/login
-   
-   
+
+
 - ClientTimeout的意义改为认证后能上网的时间(秒)。
 > 示例：
 ClientTimeout   7200
@@ -150,9 +150,9 @@ PingInterval    30
 - 配置文件中的黑白MAC名单将被忽略。
 
 ------
-###通信协议
+### 通信协议
 
-####**技术特点**
+#### **技术特点**
 通信过程是wifidogx和wifidog区别最大的一块：
 
 * 能进行批量认证，数据采用json编码，使用post方法发送http请求。
@@ -161,8 +161,8 @@ PingInterval    30
 * 报文的发送间隔和远程控制的延时成正比。因此心跳间隔不适合太大，并且双方的http报文应启用keep-alive。
 > 请在http应答中指定Content-Length为实际长度，或者启用Chunked的传输编码，wifidogx无法自动探测消息体的结束。
 
-####**请求**
-#####**报文示例**
+#### **请求**
+##### **报文示例**
 ``` javascript
 {
 	"id": "11:11:11:11:11:11"
@@ -189,12 +189,12 @@ PingInterval    30
 	"status": {
 		"sys_memfree":9284,
 		"sys_load":"0.03"
-	},	
+	},
 }
 ```
 
-#####**字段意义详解**
-> *表示必需的，非必需项的属性名可以不存在，也可能其值为false或者{} 
+##### **字段意义详解**
+> *表示必需的，非必需项的属性名可以不存在，也可能其值为false或者{}
 
 |字段名|说明|
 |------|----|
@@ -227,8 +227,8 @@ clients为用户信息数组，每个元素的各字段意义是：
 |authed|已认证，已放行|
 |logout|认证期已过，规则已关，通知了认证服务器后此用户信息会被删除|
 
-####**应答**
-#####**报文示例**
+#### **应答**
+##### **报文示例**
 ``` javascript
 {
 	"config":{
@@ -246,7 +246,7 @@ clients为用户信息数组，每个元素的各字段意义是：
 }
 ```
 
-#####**配置项**
+##### **配置项**
 当应答中指定了config时，wifidogx将立即接受这样配置并予以生效。
 这些是wifidogx新增的配置项：
 
@@ -262,13 +262,13 @@ clients为用户信息数组，每个元素的各字段意义是：
 |GreenHostname|无论是否认证都可直接访问的主机名|
 
 
-#####**认证结果**
+##### **认证结果**
 wifidogx不支持wifidog的试用期功能，认证结果只能是1或者0，其他值不合法。
 
 ### 附录
 
-####**服务端开发示例**
-#####**PHP版本(基于ThinkPHP)**
+#### **服务端开发示例**
+##### **PHP版本(基于ThinkPHP)**
 
 *wifidogx的AuthURL指定为 http://mysite.com/index.php?s=/Wifidogx/auth*
 ``` php
@@ -318,17 +318,17 @@ class WifidogxAction extends Action
 		header('Content-Type: application/json');
 		echo $json_resp;
 	}
-	
+
 	public function login()
 	{
 		// ...
 	}
-	
+
 	public function message()
 	{
 		// ...
 	}
-	
+
 	public function portal()
 	{
 		// ...
